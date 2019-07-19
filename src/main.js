@@ -32,16 +32,18 @@ const softDelete = (collectionsDirectory, collection, readObject) => {
                 resolve(result);
             }
             // Params verification: end
-
+            
             readDocumentPackage.read(collectionsDirectory, collection, readObject)
                 .then(res => {
                     const documents = [];
+                    collection = collection.toLowerCase();
+
                     (collectionsDirectory.substr(-1) === '/') ? collectionsDirectory = collectionsDirectory : collectionsDirectory = collectionsDirectory + '/';
                     collectionsDirectory = collectionsDirectory + collection + '/';
-                    if (res.result && res.result.length > 0) {
-                        const count = res.result.length;
-                        for (let i = 0; i < res.result.length; i++) {
-                            const object = res.result[i];
+                    if (res.length > 0) {
+                        const count = res.length;
+                        for (let i = 0; i < res.length; i++) {
+                            const object = res[i];
                             documents.push(object._id);
                             const newObject = {
                                 ...object,
@@ -57,14 +59,14 @@ const softDelete = (collectionsDirectory, collection, readObject) => {
                         }
     
                         resolve(result);
+                    } else {
+                        const result = {
+                            message: 'No document found',
+                            result: documents
+                        }
+    
+                        resolve(result);
                     }
-
-                    const result = {
-                        message: 'No document found',
-                        result: documents
-                    }
-
-                    resolve(result);
                 })
                 .catch(rej => {
                     reject(rej);
@@ -107,18 +109,20 @@ const softDeleteById = (collectionsDirectory, collection, id) => {
             readDocumentPackage.readById(collectionsDirectory, collection, id)
                 .then(res => {
                     const documents = [];
+                    collection = collection.toLowerCase();
+
                     (collectionsDirectory.substr(-1) === '/') ? collectionsDirectory = collectionsDirectory : collectionsDirectory = collectionsDirectory + '/';
                     collectionsDirectory = collectionsDirectory + collection + '/';
-                    if (res.result && res.result.length > 0) {
-                        const count = res.result.length;
-                        for (let i = 0; i < res.result.length; i++) {
-                            const object = res.result[i];
+                    if (res && res.length > 0) {
+                        const count = res.length;
+                        for (let i = 0; i < res.length; i++) {
+                            const object = res[i];
                             documents.push(object._id);
                             const newObject = {
                                 ...object,
                                 _deletedAt: new Date()
                             };
-                            console.log(newObject, 50);
+                            
                             fs.writeFileSync(collectionsDirectory + object._id, JSON.stringify(newObject));
                         }
                         const message = `${count} ${(documents.length > 1) ? ' documents deleted' : ' document deleted'}`;
@@ -178,12 +182,14 @@ const hardDelete = (collectionsDirectory, collection, readObject, deleteSoftDele
             readDocumentPackage.read(collectionsDirectory, collection, readObject)
                 .then(res => {
                     const documents = [];
+                    collection = collection.toLowerCase();
+
                     (collectionsDirectory.substr(-1) === '/') ? collectionsDirectory = collectionsDirectory : collectionsDirectory = collectionsDirectory + '/';
                     collectionsDirectory = collectionsDirectory + collection + '/';
-                    if (res.result && res.result.length > 0) {
+                    if (res && res.length > 0) {
                         let count = 0;
-                        for (let i = 0; i < res.result.length; i++) {
-                            const object = res.result[i];
+                        for (let i = 0; i < res.length; i++) {
+                            const object = res[i];
                             
                             if (!object._deletedAt && !deleteSoftDeleted) {
                                 documents.push(object._id);
@@ -198,14 +204,14 @@ const hardDelete = (collectionsDirectory, collection, readObject, deleteSoftDele
                         }
     
                         resolve(result);
+                    } else {
+                        const result = {
+                            message: 'No document found',
+                            result: documents
+                        }
+    
+                        resolve(result);
                     }
-
-                    const result = {
-                        message: 'No document found',
-                        result: documents
-                    }
-
-                    resolve(result);
                 })
                 .catch(rej => {
                     reject(rej);
@@ -248,12 +254,14 @@ const hardDeleteById = (collectionsDirectory, collection, id, deleteSoftDeleted 
             readDocumentPackage.readById(collectionsDirectory, collection, id)
                 .then(res => {
                     const documents = [];
+                    collection = collection.toLowerCase();
+                    
                     (collectionsDirectory.substr(-1) === '/') ? collectionsDirectory = collectionsDirectory : collectionsDirectory = collectionsDirectory + '/';
                     collectionsDirectory = collectionsDirectory + collection + '/';
-                    if (res.result && res.result.length > 0) {
+                    if (res && res.length > 0) {
                         let count = 0;
-                        for (let i = 0; i < res.result.length; i++) {
-                            const object = res.result[i];
+                        for (let i = 0; i < res.length; i++) {
+                            const object = res[i];
                             
                             if (!object._deletedAt && !deleteSoftDeleted) {
                                 documents.push(object._id);
