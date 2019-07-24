@@ -10,7 +10,8 @@ const softDelete = (collectionsDirectory, collection, readObject) => {
             // Params verification: start
             if (!collectionsDirectory) {
                 const result = {
-                    message: 'Collections directory was not defined'
+                    message: 'Collections directory was not defined',
+                    status: 400
                 };
 
                 resolve(result);
@@ -18,7 +19,8 @@ const softDelete = (collectionsDirectory, collection, readObject) => {
 
             if (!collection) {
                 const result = {
-                    message: 'Collection was not defined'
+                    message: 'Collection was not defined',
+                    status: 400
                 };
 
                 resolve(result);
@@ -26,7 +28,8 @@ const softDelete = (collectionsDirectory, collection, readObject) => {
 
             if (!readObject) {
                 const result = {
-                    message: 'Object to read query not defined'
+                    message: 'Object to read query not defined',
+                    status: 400
                 };
 
                 resolve(result);
@@ -40,10 +43,10 @@ const softDelete = (collectionsDirectory, collection, readObject) => {
 
                     (collectionsDirectory.substr(-1) === '/') ? collectionsDirectory = collectionsDirectory : collectionsDirectory = collectionsDirectory + '/';
                     collectionsDirectory = collectionsDirectory + collection + '/';
-                    if (res.length > 0) {
-                        const count = res.length;
-                        for (let i = 0; i < res.length; i++) {
-                            const object = res[i];
+                    if (res.result.length > 0) {
+                        const count = res.result.length;
+                        for (let i = 0; i < res.result.length; i++) {
+                            const object = res.result[i];
                             documents.push(object._id);
                             const newObject = {
                                 ...object,
@@ -55,6 +58,7 @@ const softDelete = (collectionsDirectory, collection, readObject) => {
                         const message = `${count} ${(documents.length > 1) ? ' documents deleted' : ' document deleted'}`;
                         const result = {
                             message: message,
+                            status: 200,
                             result: documents
                         }
     
@@ -62,6 +66,7 @@ const softDelete = (collectionsDirectory, collection, readObject) => {
                     } else {
                         const result = {
                             message: 'No document found',
+                            status: 202,
                             result: documents
                         }
     
@@ -83,7 +88,8 @@ const softDeleteById = (collectionsDirectory, collection, id) => {
             // Params verification: start
             if (!collectionsDirectory) {
                 const result = {
-                    message: 'Collections directory was not defined'
+                    message: 'Collections directory was not defined',
+                    status: 400
                 };
 
                 resolve(result);
@@ -91,7 +97,8 @@ const softDeleteById = (collectionsDirectory, collection, id) => {
 
             if (!collection) {
                 const result = {
-                    message: 'Collection was not defined'
+                    message: 'Collection was not defined',
+                    status: 400
                 };
 
                 resolve(result);
@@ -99,7 +106,8 @@ const softDeleteById = (collectionsDirectory, collection, id) => {
 
             if (!id) {
                 const result = {
-                    message: 'Id not defined'
+                    message: 'Id not defined',
+                    status: 400
                 };
 
                 resolve(result);
@@ -113,10 +121,10 @@ const softDeleteById = (collectionsDirectory, collection, id) => {
 
                     (collectionsDirectory.substr(-1) === '/') ? collectionsDirectory = collectionsDirectory : collectionsDirectory = collectionsDirectory + '/';
                     collectionsDirectory = collectionsDirectory + collection + '/';
-                    if (res && res.length > 0) {
-                        const count = res.length;
-                        for (let i = 0; i < res.length; i++) {
-                            const object = res[i];
+                    if (res && res.result.length > 0) {
+                        const count = res.result.length;
+                        for (let i = 0; i < res.result.length; i++) {
+                            const object = res.result[i];
                             documents.push(object._id);
                             const newObject = {
                                 ...object,
@@ -128,6 +136,7 @@ const softDeleteById = (collectionsDirectory, collection, id) => {
                         const message = `${count} ${(documents.length > 1) ? ' documents deleted' : ' document deleted'}`;
                         const result = {
                             message: message,
+                            status: 200,
                             result: documents
                         }
     
@@ -136,6 +145,7 @@ const softDeleteById = (collectionsDirectory, collection, id) => {
 
                     const result = {
                         message: 'No document found',
+                        status: 202,
                         result: documents
                     }
 
@@ -156,7 +166,8 @@ const hardDelete = (collectionsDirectory, collection, readObject, deleteSoftDele
             // Params verification: start
             if (!collectionsDirectory) {
                 const result = {
-                    message: 'Collections directory was not defined'
+                    message: 'Collections directory was not defined',
+                    status: 400
                 };
 
                 resolve(result);
@@ -164,7 +175,8 @@ const hardDelete = (collectionsDirectory, collection, readObject, deleteSoftDele
 
             if (!collection) {
                 const result = {
-                    message: 'Collection was not defined'
+                    message: 'Collection was not defined',
+                    status: 400
                 };
 
                 resolve(result);
@@ -172,7 +184,8 @@ const hardDelete = (collectionsDirectory, collection, readObject, deleteSoftDele
 
             if (!readObject) {
                 const result = {
-                    message: 'Object to read query not defined'
+                    message: 'Object to read query not defined',
+                    status: 400
                 };
 
                 resolve(result);
@@ -186,10 +199,10 @@ const hardDelete = (collectionsDirectory, collection, readObject, deleteSoftDele
 
                     (collectionsDirectory.substr(-1) === '/') ? collectionsDirectory = collectionsDirectory : collectionsDirectory = collectionsDirectory + '/';
                     collectionsDirectory = collectionsDirectory + collection + '/';
-                    if (res && res.length > 0) {
+                    if (res && res.result.length > 0) {
                         let count = 0;
-                        for (let i = 0; i < res.length; i++) {
-                            const object = res[i];
+                        for (let i = 0; i < res.result.length; i++) {
+                            const object = res.result[i];
                             
                             if (!object._deletedAt && !deleteSoftDeleted) {
                                 documents.push(object._id);
@@ -200,6 +213,7 @@ const hardDelete = (collectionsDirectory, collection, readObject, deleteSoftDele
                         const message = `${count}${(count > 1) ? ' documents deleted' : ' document deleted'}`;
                         const result = {
                             message: message,
+                            status: 200,
                             result: documents
                         }
     
@@ -207,6 +221,7 @@ const hardDelete = (collectionsDirectory, collection, readObject, deleteSoftDele
                     } else {
                         const result = {
                             message: 'No document found',
+                            status: 202,
                             result: documents
                         }
     
@@ -228,7 +243,8 @@ const hardDeleteById = (collectionsDirectory, collection, id, deleteSoftDeleted 
             // Params verification: start
             if (!collectionsDirectory) {
                 const result = {
-                    message: 'Collections directory was not defined'
+                    message: 'Collections directory was not defined',
+                    status: 400
                 };
 
                 resolve(result);
@@ -236,7 +252,8 @@ const hardDeleteById = (collectionsDirectory, collection, id, deleteSoftDeleted 
 
             if (!collection) {
                 const result = {
-                    message: 'Collection was not defined'
+                    message: 'Collection was not defined',
+                    status: 400
                 };
 
                 resolve(result);
@@ -244,7 +261,8 @@ const hardDeleteById = (collectionsDirectory, collection, id, deleteSoftDeleted 
 
             if (!id) {
                 const result = {
-                    message: 'Id not defined'
+                    message: 'Id not defined',
+                    status: 400
                 };
 
                 resolve(result);
@@ -258,10 +276,10 @@ const hardDeleteById = (collectionsDirectory, collection, id, deleteSoftDeleted 
                     
                     (collectionsDirectory.substr(-1) === '/') ? collectionsDirectory = collectionsDirectory : collectionsDirectory = collectionsDirectory + '/';
                     collectionsDirectory = collectionsDirectory + collection + '/';
-                    if (res && res.length > 0) {
+                    if (res && res.result.length > 0) {
                         let count = 0;
-                        for (let i = 0; i < res.length; i++) {
-                            const object = res[i];
+                        for (let i = 0; i < res.result.length; i++) {
+                            const object = res.result[i];
                             
                             if (!object._deletedAt && !deleteSoftDeleted) {
                                 documents.push(object._id);
@@ -272,6 +290,7 @@ const hardDeleteById = (collectionsDirectory, collection, id, deleteSoftDeleted 
                         const message = `${count}${(count > 1) ? ' documents deleted' : ' document deleted'}`;
                         const result = {
                             message: message,
+                            status: 200,
                             result: documents
                         }
     
@@ -280,6 +299,7 @@ const hardDeleteById = (collectionsDirectory, collection, id, deleteSoftDeleted 
 
                     const result = {
                         message: 'No document found',
+                        status: 400,
                         result: documents
                     }
 
